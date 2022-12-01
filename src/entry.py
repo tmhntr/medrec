@@ -63,7 +63,7 @@ def get_date() -> str:
 class Entry:
     date: str = get_date()
     description: str = ""
-    entry_type: str = EntryType.NORMAL
+    entry_type: EntryType = EntryType.NORMAL
     attachments: list[str] = None
     healthcare_workers: list[HealthcareWorkers] = None
     medications: list[MedicationEntry] = None
