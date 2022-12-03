@@ -63,12 +63,15 @@ def get_date() -> str:
 class Entry:
     date: str = get_date()
     description: str = ""
-    entry_type: EntryType = EntryType.NORMAL
-    attachments: list[str] = None
-    healthcare_workers: list[HealthcareWorkers] = None
-    medications: list[MedicationEntry] = None
-    health_data: HealthData = None
+    entry_type: str = EntryType.NORMAL
+    attachments: str = None
+    healthcare_workers: str = None
+    medications: str = None
+    health_data: str = None
 
+    # a dunder to make it json serializable
+    def __repr__(self):
+        return self.__dict__
 
     def __str__(self):
         return f"Date: {self.date}\nDescription: {self.description}\nEntry Type: {self.entry_type}\nAttachments: {self.attachments}\nHealthcare Workers: {self.healthcare_workers}\nMedications: {self.medications}\nHealth Data: {self.health_data}"
