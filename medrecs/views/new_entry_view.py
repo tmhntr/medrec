@@ -1,7 +1,7 @@
 import customtkinter
 from customtkinter import BOTH, LEFT, RIGHT, X, Y, CTkEntry, CTkLabel, CTkButton, CTkFrame, BOTTOM
 
-from src.entry import Entry
+from medrecs.entry import Entry
 
 class NewEntryView(customtkinter.CTkFrame):
     def __init__(self, parent, controller=None):

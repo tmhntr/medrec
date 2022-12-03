@@ -1,9 +1,10 @@
 import pickle
+import os
 
-from src.entry import Entry
+from medrecs.entry import Entry
 
+data_path = os.path.join(os.path.dirname(__file__), "../data/entries.pickle")
 
-data_path = "data.pickle"
 
 class Model:
     def __init__(self, path: str = None):

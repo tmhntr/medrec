@@ -1,11 +1,11 @@
 import customtkinter
 from customtkinter import BOTH, LEFT, RIGHT, X, Y
 
-from src.model import Model, data_path
-from src.entry import Entry
-from src.views.home_view import HomeView
-from src.views.new_entry_view import NewEntryView
-from src.views.entry_list_view import EntryListView
+from medrecs.model import Model, data_path
+from medrecs.entry import Entry
+from medrecs.views.home_view import HomeView
+from medrecs.views.new_entry_view import NewEntryView
+from medrecs.views.entry_list_view import EntryListView
 
 
 class Controller:

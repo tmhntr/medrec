@@ -1,7 +1,7 @@
 import customtkinter
 from customtkinter import *
 
-from src.entry import Entry
+from medrecs.entry import Entry
 
 class ViewEntriesGrid(customtkinter.CTkFrame):
     def __init__(self, parent, entries: list[Entry], controller=None):

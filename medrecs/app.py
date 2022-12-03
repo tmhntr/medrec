@@ -1,8 +1,8 @@
 import customtkinter
 from customtkinter import BOTH, LEFT, RIGHT, X, Y
 
-from src.model import Model
-from src.controller import Controller
+from medrecs.model import Model
+from medrecs.controller import Controller
 
 
 customtkinter.set_appearance_mode("dark")
@@ -20,7 +20,7 @@ class App(customtkinter.CTk):
         self.geometry('800x600+300+300')
 
         # create a model
-        model = Model("data/entries.pickle")
+        model = Model("../data/entries.pickle")
 
         # create a view and place it on the root window
         view = customtkinter.CTkFrame(self)
@@ -34,7 +34,9 @@ class App(customtkinter.CTk):
         # set the controller to view
         # view.set_controller(controller)
 
-
-if __name__ == '__main__':
+def main():
     app = App()
     app.mainloop()
+
+if __name__ == '__main__':
+    main()
