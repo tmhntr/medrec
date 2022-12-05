@@ -4,11 +4,6 @@ author: Tim Hunter (thunte27@uwo.ca)
 ---
 # Medical records app
 
-## Input
-
-medical entries. Entries may be doctor appointments, picking up meds, changing meds, any time you get sick, or tracking any of your medical or fitness data.
-medical records include [date, description, attachments, doctors/institutions, medications, {personal health data}]
-
 ## Features
 
 ### Modern UI with customtkinter
@@ -40,3 +35,8 @@ This app keeps your data stored on the disk so you don't have to worry about los
   - gantt view for medications/other
   - maybe charts
 - save records as a text file and encrypted
+
+## What I learned from this project
+
+- Successful implementation of the MVC pattern
+- Create a desktop UI using tkinter and customtkinter

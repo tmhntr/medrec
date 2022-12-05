@@ -60,7 +60,7 @@ def get_date() -> str:
     return datetime.now().strftime("%m/%d/%Y")
 
 @dataclass
-class Entry:
+class Entry():
     date: str = get_date()
     description: str = ""
     entry_type: str = EntryType.NORMAL
@@ -69,10 +69,4 @@ class Entry:
     medications: str = None
     health_data: str = None
 
-    # a dunder to make it json serializable
-    def __repr__(self):
-        return self.__dict__
-
-    def __str__(self):
-        return f"Date: {self.date}\nDescription: {self.description}\nEntry Type: {self.entry_type}\nAttachments: {self.attachments}\nHealthcare Workers: {self.healthcare_workers}\nMedications: {self.medications}\nHealth Data: {self.health_data}"
-
+    

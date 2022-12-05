@@ -1,7 +1,9 @@
 import customtkinter
 from customtkinter import LEFT, RIGHT, X, Y, BOTH
+from ui.page import Page
+from view import PageType
 
-class HomeView(customtkinter.CTkFrame):
+class HomeView(Page):
     def __init__(self, parent, controller = None):
         super().__init__(parent)
 
@@ -44,13 +46,16 @@ class HomeView(customtkinter.CTkFrame):
 
         self.set_controller(controller)
 
+    def update(self, data) -> None:
+        pass
+
     def view_entries(self):
         if self.controller:
-            self.controller.view_entries_page()
+            self.controller.set_page(PageType.VIEW_ENTRIES_PAGE)
 
     def new_entry(self):
         if self.controller:
-            self.controller.new_entry_page()
+            self.controller.set_page(PageType.ADD_ENTRY_PAGE)
 
     def set_controller(self, controller):
         self.controller = controller

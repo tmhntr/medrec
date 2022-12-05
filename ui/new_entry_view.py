@@ -1,10 +1,9 @@
-import customtkinter
 from customtkinter import BOTH, LEFT, RIGHT, X, Y, CTkEntry, CTkLabel, CTkButton, CTkFrame, BOTTOM
+from controller import Controller
+from ui.page import Page
 
-from medrecs.entry import Entry
-
-class NewEntryView(customtkinter.CTkFrame):
-    def __init__(self, parent, controller=None):
+class NewEntryView(Page):
+    def __init__(self, parent, controller: Controller=None):
         super().__init__(parent)
 
         self.set_controller(controller)
@@ -22,7 +21,7 @@ class NewEntryView(customtkinter.CTkFrame):
             entry = CTkEntry(frame)
             entry.pack(fill=X, padx=5, expand=True)
 
-            self.entry_dict[self.labels[i]] = entry
+            self.entry_dict[self.labels[i].lower().replace(" ", "_")] = entry
         
         submit_button = CTkButton(self, text="Submit", command=self.submit)
 
@@ -30,18 +29,15 @@ class NewEntryView(customtkinter.CTkFrame):
         submit_button.pack(side=BOTTOM, expand=True, padx=5, pady=5)
 
 
-    def set_controller(self, controller):
+    def set_controller(self, controller: Controller):
         self.controller = controller
 
     def submit(self):
         if self.controller:
-            entry = Entry()
-            entry.date = self.entry_dict["Date"].get()
-            entry.description = self.entry_dict["Description"].get()
-            entry.entry_type = self.entry_dict["Entry Type"].get()
-            entry.attachments = self.entry_dict["Attachments"].get()
-            entry.healthcare_workers = self.entry_dict["Healthcare Workers"].get()
-            entry.medications = self.entry_dict["Medications"].get()
-            entry.health_data = self.entry_dict["Health Data"].get()
+            entry_data = {}
+            for key, entry in self.entry_dict.items():
+                entry_data[key] = entry.get()
+            self.controller.nev_submit_entry(entry_data)
 
-            self.controller.submit_entry(entry)
+    def update(self, data=None):
+        pass
