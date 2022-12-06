@@ -23,14 +23,11 @@ class ViewEntriesGrid(Page):
         self.grid_columnconfigure(1, weight=1, pad=10)
         self.grid_columnconfigure(2, weight=1, pad=10)
         self.grid_columnconfigure(3, weight=1, pad=10)
-        self.grid_columnconfigure(4, weight=1, pad=10)
-        self.grid_columnconfigure(5, weight=1, pad=10)
-        self.grid_columnconfigure(6, weight=1, pad=10)
 
         for i in range(len(entries) + 1):
             self.grid_rowconfigure(i, weight=1, pad=10)
 
-        self.labels = ["Date", "Description", "Entry Type", "Attachments", "Healthcare Workers", "Medications", "Health Data"]
+        self.labels = ["Date", "Description", "Entry Type"]
         for i in range(len(self.labels)):
             label = customtkinter.CTkLabel(self, text=self.labels[i])
             label.grid(row=0, column=i)
@@ -45,14 +42,11 @@ class ViewEntriesGrid(Page):
                 description.grid(row=row, column=1)
                 entry_type = customtkinter.CTkLabel(self, text=entry.entry_type)
                 entry_type.grid(row=row, column=2)
-                attachments = customtkinter.CTkLabel(self, text=entry.attachments)
-                attachments.grid(row=row, column=3)
-                healthcare_workers = customtkinter.CTkLabel(self, text=entry.healthcare_workers)
-                healthcare_workers.grid(row=row, column=4)
-                medications = customtkinter.CTkLabel(self, text=entry.medications)
-                medications.grid(row=row, column=5)
-                health_data = customtkinter.CTkLabel(self, text=entry.health_data)
-                health_data.grid(row=row, column=6)
+
+                edit_button = customtkinter.CTkButton(self, text="Edit", command=lambda: self.edit_entry_clicked(entry.id))
+
+    def edit_entry_clicked(self, entry_id):
+        self.controller.edit_entry(entry_id)
 
 
 class EntryListView(Page):
@@ -61,25 +55,30 @@ class EntryListView(Page):
 
         self.set_controller(controller)
 
-        self.labels = ["Date", "Description", "Entry Type", "Attachments", "Healthcare Workers", "Medications", "Health Data"]
+        self.header_frame = customtkinter.CTkFrame(self)
+        self.header_frame.pack(side=TOP, fill=X)
 
-        self.return_button = customtkinter.CTkButton(self, text="Return", command=self.return_to_main)
-        self.return_button.pack(side=LEFT)
+        self.return_button = customtkinter.CTkButton(self.header_frame, text="Return", command=self.return_to_main)
+        self.return_button.pack(side=LEFT, padx=24, pady=20)
 
-        self.label = customtkinter.CTkLabel(self, text="View Entries", font=("Arial", 20))
-        self.label.pack(fill=X)
+        self.label = customtkinter.CTkLabel(self.header_frame, text="View Entries", font=("Arial", 20))
+        self.label.pack(fill=X, expand=True, padx=24, pady=20)
+
 
         self.table = ViewEntriesGrid(self)
-        self.table.pack(fill=BOTH, expand=True)
+        self.table.pack(fill=BOTH, expand=True, padx=24, pady=20)
 
-        self.back_button = customtkinter.CTkButton(self, text="Back", command=self.prev)
-        self.back_button.pack()
+        self.button_frame = customtkinter.CTkFrame(self)
+        self.button_frame.pack(side=BOTTOM, expand=True, padx=24, pady=20)
 
-        self.number_label = customtkinter.CTkLabel(self, text="")
-        self.number_label.pack(expand=True)
+        self.back_button = customtkinter.CTkButton(self.button_frame, text="Back", command=self.prev)
+        self.back_button.pack(side=LEFT, padx=12, pady=10)
 
-        self.next_button = customtkinter.CTkButton(self, text="Next", command=self.next)
-        self.next_button.pack()
+        self.number_label = customtkinter.CTkLabel(self.button_frame, text="")
+        self.number_label.pack(side=LEFT, padx=12, pady=10)
+
+        self.next_button = customtkinter.CTkButton(self.button_frame, text="Next", command=self.next)
+        self.next_button.pack(side=LEFT, padx=12, pady=10)
 
     def return_to_main(self):
         self.controller.set_page(PageType.MAIN_PAGE)
