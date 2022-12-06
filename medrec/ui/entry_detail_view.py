@@ -1,17 +1,19 @@
-from entry import Entry
+from medrec.entry import Entry
 from customtkinter import CTkFrame, CTkLabel, CTkTextbox, CTkButton
 
-from controller import Controller
+from medrec.controller import Controller
+
 
 class EntryDetailView(CTkFrame):
-    def __init__(self, parent, controller: Controller=None):
+    def __init__(self, parent, controller: Controller = None):
         super().__init__(parent)
         self.set_controller(controller)
 
         self.header_frame = CTkFrame(self)
         self.header_frame.pack(fill="x", padx=24, pady=20)
 
-        self.back_button = CTkButton(self.header_frame, text="Back", command=self.back_button_clicked)
+        self.back_button = CTkButton(
+            self.header_frame, text="Back", command=self.back_button_clicked)
         self.back_button.pack(side="left")
 
         self.header_label = CTkLabel(self.header_frame, text="Entry Details")
@@ -41,7 +43,8 @@ class EntryDetailView(CTkFrame):
         self.attachments_textbox = CTkTextbox(self)
         self.attachments_textbox.pack(fill="x")
 
-        self.healthcare_workers_label = CTkLabel(self, text="Healthcare Workers:")
+        self.healthcare_workers_label = CTkLabel(
+            self, text="Healthcare Workers:")
         self.healthcare_workers_label.pack(fill="x")
 
         self.healthcare_workers_textbox = CTkTextbox(self)

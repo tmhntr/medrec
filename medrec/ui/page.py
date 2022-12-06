@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from tkinter import Frame as CTkFrame
 
-from controller import Controller
+from medrec.controller import Controller
+
 
 class Page(CTkFrame, ABC):
     """The pages in the application."""

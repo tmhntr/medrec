@@ -1,8 +1,7 @@
 from uuid import UUID
-from model import Model, data_path
-from entry import Entry
-from view import View, PageType
-
+from medrec.model import Model, data_path
+from medrec.entry import Entry, EntryType
+from medrec.view import View, PageType
 
 
 class Controller:
@@ -42,9 +41,8 @@ class Controller:
         data["display_count"] = display_len
         return data
 
-    def nev_submit_entry(self, data):
+    def nev_submit_entry(self, entry: Entry):
         # TODO: Validate data
-        entry = Entry(**data)
         self.model.add_entry(entry)
         self.model.set_page(PageType.MAIN_PAGE)
         self.update_view()
@@ -74,3 +72,7 @@ class Controller:
         self.model.set_page(PageType.EDIT_ENTRY_PAGE)
         entry = self.model.get_entry_by_id(entry_id)
         self.view.update({"page": PageType.EDIT_ENTRY_PAGE, "entry": entry})
+
+    def nev_entry_type_changed(self, entry_type: EntryType):
+        self.view.update(
+            {"page": PageType.NEW_ENTRY_PAGE, "entry_type": entry_type})

@@ -1,7 +1,7 @@
-from model import Model, data_path
-from controller import Controller
-from ui.ctk_view import CTkView
-   
+from medrec.model import Model, data_path
+from medrec.controller import Controller
+from medrec.ui.ctk_view import CTkView
+
 
 class App():
     def __init__(self):
@@ -17,7 +17,6 @@ class App():
 
         self.controller.update_view()
 
-
     def mainloop(self):
         self.view.mainloop()
 
@@ -25,6 +24,7 @@ class App():
 def main():
     app = App()
     app.mainloop()
+
 
 if __name__ == '__main__':
     main()

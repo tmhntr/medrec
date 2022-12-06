@@ -2,10 +2,11 @@ import pickle
 import os
 from uuid import UUID
 
-from entry import Entry
-from view import PageType
+from medrec.entry import Entry
+from medrec.view import PageType
 
-data_path = os.path.join(os.path.dirname(__file__), "data/entries.pickle")
+data_path = os.path.join(os.path.dirname(__file__), "../data/entries.pickle")
+
 
 class EntryViewModel:
     entry_index: int
@@ -27,12 +28,14 @@ class EntryViewModel:
     def get_display_number(self):
         return self.display_number
 
+
 class Model:
     entries: list[Entry] = []
     entry_map: dict[UUID, Entry] = {}
     page_history = []
 
     def __init__(self, path: str = None):
+        self.data_path = path
 
         self.entry_view_model = EntryViewModel(0, 5)
 
@@ -42,7 +45,7 @@ class Model:
     def add_entry(self, entry: Entry):
         self.entries.append(entry)
         self.entry_map[entry.id] = entry
-        self.save(data_path)
+        self.save()
 
     def get_entry(self, idx: int):
         if idx < 0 or idx >= len(self.entries):
@@ -60,16 +63,19 @@ class Model:
 
     def remove_entry(self, idx: int):
         del self.entries[idx]
-        self.save(data_path)
+        self.save()
 
     def remove_all_entries(self):
         self.entries = []
-        self.save(data_path)
+        self.save()
 
-    def save(self, path: str):
+    def save(self):
         # write entries as json to path
-        with open(path, "wb") as f:
-            pickle.dump(self.entries, f)
+        if self.data_path is not None:
+            with open(self.data_path, "wb") as f:
+                pickle.dump(self.entries, f)
+        else:
+            raise ValueError("No path specified")
 
     def load(self, path: str):
         # read entries from json at path
@@ -93,4 +99,3 @@ class Model:
 
     def back_page(self):
         self.page_history.pop()
-

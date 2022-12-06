@@ -6,6 +6,8 @@ from uuid import UUID, uuid4
 from abc import ABC, abstractmethod
 
 # an enum class for the different types of entries
+
+
 class EntryType(Enum):
     MEDICATION = auto()
     HEALTH_DATA = auto()
@@ -21,6 +23,10 @@ class Entry(ABC):
     healthcare_workers = []
     notes: str = None
 
+    def __init__(self, date: str = None):
+        if date:
+            self.date = date
+
     def add_notes(self, notes: str):
         self.notes = notes
 
@@ -28,8 +34,8 @@ class Entry(ABC):
 class MedicationEntry(Entry):
     entry_type: str = EntryType.MEDICATION
 
-    def __init__(self, name, dosage, frequency, duration, route, reason):
-        super().__init__()
+    def __init__(self, date, name, dosage, frequency, duration, route, reason):
+        super().__init__(date=date)
         self.medication_name = name
         self.dosage = dosage
         self.frequency = frequency
@@ -37,12 +43,15 @@ class MedicationEntry(Entry):
         self.route = route
         self.reason = reason
         self.notes = None
-        self.description = ", ".join([self.medication_name, self.dosage, self.frequency, self.duration, self.route, self.reason])
 
-
+        attr_list = [self.medication_name, self.dosage,
+                     self.frequency, self.duration, self.route, self.reason]
+        attr_list = [attr for attr in attr_list if attr]
+        self.description = ", ".join(attr_list)
 
     def __str__(self):
         return f"{self.medication_name} {self.dosage} {self.frequency} {self.duration} {self.route} {self.reason}"
+
 
 class HealthDataEntry(Entry):
     def __init__(self, weight, height, blood_pressure, heart_rate, respiratory_rate, temperature):
@@ -57,6 +66,7 @@ class HealthDataEntry(Entry):
     def __str__(self):
         return f"{self.weight} {self.height} {self.blood_pressure} {self.heart_rate} {self.respiratory_rate} {self.temperature}"
 
+
 class DoctorVisitEntry(Entry):
     def __init__(self, reason, diagnosis, treatment):
         super().__init__()
@@ -66,6 +76,7 @@ class DoctorVisitEntry(Entry):
 
     def __str__(self):
         return f"{self.reason} {self.diagnosis} {self.treatment}"
+
 
 class HealthcareWorker():
     def __init__(self, name, role, address, phone_number, email):
@@ -77,4 +88,3 @@ class HealthcareWorker():
 
     def __str__(self):
         return f"{self.name} {self.role}"
-    

@@ -1,4 +1,4 @@
-from app import App
+from medrec.app import main
 
-app = App()
-app.mainloop()
+if __name__ == '__main__':
+    main()
