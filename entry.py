@@ -1,72 +1,80 @@
-from dataclasses import dataclass
 from enum import Enum, auto
 # import library for dates
 from datetime import datetime
-
+from typing import Any
+from uuid import UUID, uuid4
+from abc import ABC, abstractmethod
 
 # an enum class for the different types of entries
 class EntryType(Enum):
-    # a normal entry
-    NORMAL = auto()
-    # an entry that is a subtask of another entry
-    SUBTASK = auto()
-    # an entry that is a subtask of another entry that is a subtask of another entry
-    SUBSUBTASK = auto()
+    MEDICATION = auto()
+    HEALTH_DATA = auto()
+    DOCTOR_VISIT = auto()
 
-# an enum class for the different types of healthcare workers
-class HealthcareWorkerType(Enum):
-    # a doctor
-    DOCTOR = auto()
-    # a nurse
-    NURSE = auto()
-    # a technician
-    TECHNICIAN = auto()
-    # a pharmacist
-    PHARMACIST = auto()
 
-# a dataclass for medication entries
-@dataclass
-class MedicationEntry:
-    # the name of the medication
-    name: str
-    # the dosage of the medication
-    dosage: str
-    # the frequency of the medication
-    frequency: str
-    # the duration of the medication
-    duration: str
-    # the route of the medication
-    route: str
-    # the reason for the medication
-    reason: str
-
-@dataclass
-class HealthcareWorkers:
-    name: str
-    role: HealthcareWorkerType
-
-# a dataclass for health data
-@dataclass
-class HealthData:
-    weight: float = None
-    height: float = None
-    blood_pressure: str = None
-    heart_rate: int = None
-    respiratory_rate: int = None
-    temperature: float = None
-
-# a function to get todays date as a string
-def get_date() -> str:
-    return datetime.now().strftime("%m/%d/%Y")
-
-@dataclass
-class Entry():
-    date: str = get_date()
+class Entry(ABC):
+    id: UUID = uuid4()
+    date: str = datetime.now().strftime("%Y-%m-%d")
     description: str = ""
-    entry_type: str = EntryType.NORMAL
+    entry_type: EntryType
     attachments: str = None
-    healthcare_workers: str = None
-    medications: str = None
-    health_data: str = None
+    healthcare_workers = []
+    notes: str = None
 
+    def add_notes(self, notes: str):
+        self.notes = notes
+
+
+class MedicationEntry(Entry):
+    entry_type: str = EntryType.MEDICATION
+
+    def __init__(self, name, dosage, frequency, duration, route, reason):
+        super().__init__()
+        self.medication_name = name
+        self.dosage = dosage
+        self.frequency = frequency
+        self.duration = duration
+        self.route = route
+        self.reason = reason
+        self.notes = None
+        self.description = ", ".join([self.medication_name, self.dosage, self.frequency, self.duration, self.route, self.reason])
+
+
+
+    def __str__(self):
+        return f"{self.medication_name} {self.dosage} {self.frequency} {self.duration} {self.route} {self.reason}"
+
+class HealthDataEntry(Entry):
+    def __init__(self, weight, height, blood_pressure, heart_rate, respiratory_rate, temperature):
+        super().__init__()
+        self.weight = weight
+        self.height = height
+        self.blood_pressure = blood_pressure
+        self.heart_rate = heart_rate
+        self.respiratory_rate = respiratory_rate
+        self.temperature = temperature
+
+    def __str__(self):
+        return f"{self.weight} {self.height} {self.blood_pressure} {self.heart_rate} {self.respiratory_rate} {self.temperature}"
+
+class DoctorVisitEntry(Entry):
+    def __init__(self, reason, diagnosis, treatment):
+        super().__init__()
+        self.reason = reason
+        self.diagnosis = diagnosis
+        self.treatment = treatment
+
+    def __str__(self):
+        return f"{self.reason} {self.diagnosis} {self.treatment}"
+
+class HealthcareWorker():
+    def __init__(self, name, role, address, phone_number, email):
+        self.name = name
+        self.role = role
+        self.address = address
+        self.phone_number = phone_number
+        self.email = email
+
+    def __str__(self):
+        return f"{self.name} {self.role}"
     

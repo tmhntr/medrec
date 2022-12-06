@@ -1,3 +1,4 @@
+from uuid import UUID
 from model import Model, data_path
 from entry import Entry
 from view import View, PageType
@@ -68,3 +69,8 @@ class Controller:
     def back(self):
         self.model.back_page()
         self.update_view()
+
+    def edit_entry(self, entry_id: UUID):
+        self.model.set_page(PageType.EDIT_ENTRY_PAGE)
+        entry = self.model.get_entry_by_id(entry_id)
+        self.view.update({"page": PageType.EDIT_ENTRY_PAGE, "entry": entry})

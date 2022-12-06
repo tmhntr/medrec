@@ -1,5 +1,6 @@
 import pickle
 import os
+from uuid import UUID
 
 from entry import Entry
 from view import PageType
@@ -28,6 +29,7 @@ class EntryViewModel:
 
 class Model:
     entries: list[Entry] = []
+    entry_map: dict[UUID, Entry] = {}
     page_history = []
 
     def __init__(self, path: str = None):
@@ -39,12 +41,16 @@ class Model:
 
     def add_entry(self, entry: Entry):
         self.entries.append(entry)
+        self.entry_map[entry.id] = entry
         self.save(data_path)
 
     def get_entry(self, idx: int):
         if idx < 0 or idx >= len(self.entries):
             return None
         return self.entries[idx]
+
+    def get_entry_by_id(self, id: UUID):
+        return self.entry_map[id]
 
     def get_entries(self):
         return self.entries
@@ -69,7 +75,11 @@ class Model:
         # read entries from json at path
         try:
             with open(path, "rb") as f:
-                self.entries = pickle.load(f)
+                entries = pickle.load(f)
+                for entry in entries:
+                    self.entries.append(entry)
+                    self.entry_map[entry.id] = entry
+                self.entries.sort(key=lambda x: x.date, reverse=True)
         except FileNotFoundError:
             pass
 
