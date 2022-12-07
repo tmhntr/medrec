@@ -1,8 +1,9 @@
 """this module runs tests on the model.py file"""
 import pytest
-from src.model import Model
-from src.entry import Entry
+from medrec.model import Model
+from medrec.entry import Entry
 import os
+
 
 class TestModel(pytest.TestCase):
     """this class runs tests on the model.py file"""

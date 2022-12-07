@@ -1,12 +1,15 @@
 from customtkinter import BOTH, LEFT, RIGHT, TOP, X, Y, CTkEntry, CTkLabel, CTkButton, CTkFrame, BOTTOM, CTkComboBox
 from medrec.controller import Controller
 from medrec.ui.page import Page
-from medrec.entry import EntryType, MedicationEntry
+from medrec.entry import Entry, EntryType, MedicationEntry
 
 
 class MedicationEntryForm(CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, controller: Controller = None, entry: MedicationEntry = None):
         super().__init__(parent)
+
+        self.controller = controller
+        self.entry = entry if entry else MedicationEntry()
 
         self.grid_columnconfigure(0, pad=10)
         self.grid_columnconfigure(1, pad=10, weight=1)
@@ -18,6 +21,7 @@ class MedicationEntryForm(CTkFrame):
         self.grid_rowconfigure(4, pad=10)
         self.grid_rowconfigure(5, pad=10)
         self.grid_rowconfigure(6, pad=10)
+        self.grid_rowconfigure(7, pad=10)
 
         self.date_label = CTkLabel(self, text="Date")
         self.date_label.grid(row=0, column=0, sticky="w")
@@ -67,10 +71,13 @@ class MedicationEntryForm(CTkFrame):
         # self.prescribed_by_entry = CTkEntry(self)
         # self.prescribed_by_entry.pack(side=TOP, padx=5, pady=5)
 
+        submit_button = CTkButton(self, text="Submit", command=self.submit)
+        submit_button.grid(row=7, column=0, sticky="nsew", columnspan=2)
+
     def get_entry(self):
         entry = MedicationEntry(
             date=self.date_entry.get(),
-            name=self.name_entry.get(),
+            medication_name=self.name_entry.get(),
             dosage=self.dosage_entry.get(),
             frequency=self.frequency_entry.get(),
             duration=self.duration_entry.get(),
@@ -79,10 +86,20 @@ class MedicationEntryForm(CTkFrame):
 
         return entry
 
+    def submit(self):
+        entry = self.get_entry()
+        if self.controller:
+            self.controller.nev_submit_entry(entry)
 
-class NewEntryView(Page):
-    def __init__(self, parent, controller: Controller = None):
+
+class EditEntryView(Page):
+    entry: Entry = None
+
+    def __init__(self, parent, controller: Controller = None, entry: Entry = None):
         super().__init__(parent)
+
+        if entry is not None:
+            self.entry = entry
 
         self.set_controller(controller)
 
@@ -97,20 +114,25 @@ class NewEntryView(Page):
             self.frame1, values=entry_types, command=self.entry_type_selected)
         self.entry_type_entry.pack(side=TOP, padx=5, pady=5)
 
-    def entry_type_selected(self, event):
+        self.frame2 = None
+
+        self.update()
+
+    def entry_type_selected(self, event=None):
         entry_type = self.entry_type_entry.get()
         if entry_type == EntryType.MEDICATION.name:
-            self.frame2 = MedicationEntryForm(self)
-            self.frame2.pack(fill=X, expand=True, padx=20, pady=40)
-        # elif entry_type == EntryType.HEALTH_DATA.name:
-        #     self.frame2 = HealthDataEntryForm(self)
-        #     self.frame2.pack(fill=X, expand=True, padx=20, pady=40)
-        # elif entry_type == EntryType.DOCTOR_VISIT.name:
-        #     self.frame2 = DoctorVisitEntryForm(self)
-        #     self.frame2.pack(fill=X, expand=True, padx=20, pady=40)
+            if not self.entry or self.entry.entry_type != EntryType.MEDICATION:
+                self.entry = MedicationEntry()
 
-        submit_button = CTkButton(self, text="Submit", command=self.submit)
-        submit_button.pack(side=BOTTOM, expand=True, padx=5, pady=5)
+        self.update()
+
+    def update(self):
+        if self.entry:
+            self.entry_type_entry.set(self.entry.entry_type.name)
+            if self.entry.entry_type == EntryType.MEDICATION:
+                self.frame2 = MedicationEntryForm(
+                    self, controller=self.controller, entry=self.entry)
+                self.frame2.pack(fill=X, expand=True, padx=20, pady=40)
 
     def set_controller(self, controller: Controller):
         self.controller = controller
@@ -119,6 +141,3 @@ class NewEntryView(Page):
         if self.controller and self.frame2:
             entry = self.frame2.get_entry()
             self.controller.nev_submit_entry(entry)
-
-    def update(self, data=None):
-        pass

@@ -4,8 +4,7 @@ from uuid import UUID
 
 from medrec.entry import Entry
 from medrec.view import PageType
-
-data_path = os.path.join(os.path.dirname(__file__), "../data/entries.pickle")
+import medrec.database as database
 
 
 class EntryViewModel:
@@ -31,63 +30,37 @@ class EntryViewModel:
 
 class Model:
     entries: list[Entry] = []
-    entry_map: dict[UUID, Entry] = {}
+    entry_map: dict[str, Entry] = {}
     page_history = []
+    current_entry: str
 
     def __init__(self, path: str = None):
         self.data_path = path
 
         self.entry_view_model = EntryViewModel(0, 5)
 
-        if path is not None:
-            self.load(path)
+        database.create_db()
+
+    def set_current_entry(self, id: str):
+        self.current_entry = id
+
+    def get_current_entry(self) -> Entry:
+        return database.get_entry(self.current_entry)
 
     def add_entry(self, entry: Entry):
-        self.entries.append(entry)
-        self.entry_map[entry.id] = entry
-        self.save()
+        database.add_entry(entry)
 
-    def get_entry(self, idx: int):
-        if idx < 0 or idx >= len(self.entries):
-            return None
-        return self.entries[idx]
+    def get_entry(self, id: str):
+        return database.get_entry(id)
 
-    def get_entry_by_id(self, id: UUID):
-        return self.entry_map[id]
-
-    def get_entries(self):
-        return self.entries
+    def get_entries(self, start_date: str = None, end_date: str = None, entry_type: str = None, limit: int = None, offset: int = None, order_by: str = None):
+        return database.get_entries(start_date=start_date, end_date=end_date, entry_type=entry_type, limit=limit, offset=offset, order_by=order_by)
 
     def get_entry_count(self):
-        return len(self.entries)
+        return database.get_entry_count()
 
-    def remove_entry(self, idx: int):
-        del self.entries[idx]
-        self.save()
-
-    def remove_all_entries(self):
-        self.entries = []
-        self.save()
-
-    def save(self):
-        # write entries as json to path
-        if self.data_path is not None:
-            with open(self.data_path, "wb") as f:
-                pickle.dump(self.entries, f)
-        else:
-            raise ValueError("No path specified")
-
-    def load(self, path: str):
-        # read entries from json at path
-        try:
-            with open(path, "rb") as f:
-                entries = pickle.load(f)
-                for entry in entries:
-                    self.entries.append(entry)
-                    self.entry_map[entry.id] = entry
-                self.entries.sort(key=lambda x: x.date, reverse=True)
-        except FileNotFoundError:
-            pass
+    def remove_entry(self, id: int):
+        database.delete_entry(id)
 
     def set_page(self, page: PageType):
         self.page_history.append(page)

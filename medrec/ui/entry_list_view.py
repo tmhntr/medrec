@@ -1,6 +1,7 @@
 import customtkinter
 from customtkinter import *
 from medrec.controller import Controller
+from medrec.ui.header import Header
 from medrec.view import PageType, View
 from medrec.ui.page import Page
 
@@ -9,18 +10,19 @@ from medrec.entry import Entry
 
 class ViewEntriesGrid(Page):
     entries: list[Entry] = []
+    labels = ["Date", "Description", "Entry Type"]
 
-    def __init__(self, parent):
+    def __init__(self, parent, entries: list[Entry] = [], controller: Controller = None):
         super().__init__(parent)
 
-        self.update({"entries": []})
+        self.update(entries)
 
-    def update(self, data=None):
+    def update(self, entries: list[Entry] = []):
         """Update the UI."""
         for widget in self.winfo_children():
             widget.destroy()
 
-        self.entries: list[Entry] = data.get("entries")
+        self.entries = entries
         self.grid_columnconfigure(0, weight=1, pad=10)
         self.grid_columnconfigure(1, weight=1, pad=10)
         self.grid_columnconfigure(2, weight=1, pad=10)
@@ -29,9 +31,8 @@ class ViewEntriesGrid(Page):
         for i in range(len(self.entries) + 1):
             self.grid_rowconfigure(i, weight=1, pad=10)
 
-        self.labels = ["Date", "Description", "Entry Type"]
-        for i in range(len(self.labels)):
-            label = customtkinter.CTkLabel(self, text=self.labels[i])
+        for i, label in enumerate(self.labels):
+            label = customtkinter.CTkLabel(self, text=label)
             label.grid(row=0, column=i)
 
         for i, entry in enumerate(self.entries):
@@ -56,21 +57,19 @@ class ViewEntriesGrid(Page):
 
 
 class EntryListView(Page):
-    def __init__(self, parent, controller: Controller = None):
+    entries: list[Entry] = []
+    start_index: int = 0
+    display_count: int = 10
+    entry_count: int = 0
+
+    def __init__(self, parent, controller: Controller = None, entries: list[Entry] = None, start_index: int = None, display_count: int = None, entry_count: int = None):
         super().__init__(parent)
 
         self.set_controller(controller)
 
-        self.header_frame = customtkinter.CTkFrame(self)
-        self.header_frame.pack(side=TOP, fill=X)
-
-        self.return_button = customtkinter.CTkButton(
-            self.header_frame, text="Return", command=self.return_to_main)
-        self.return_button.pack(side=LEFT, padx=24, pady=20)
-
-        self.label = customtkinter.CTkLabel(
-            self.header_frame, text="View Entries", font=("Arial", 20))
-        self.label.pack(fill=X, expand=True, padx=24, pady=20)
+        self.header = Header(self, label="View Entries",
+                             controller=self.controller, has_back_button=True)
+        self.header.pack(fill=X, expand=True, padx=24, pady=20)
 
         self.table = ViewEntriesGrid(self)
         self.table.pack(fill=BOTH, expand=True, padx=24, pady=20)
@@ -89,17 +88,25 @@ class EntryListView(Page):
             self.button_frame, text="Next", command=self.next)
         self.next_button.pack(side=LEFT, padx=12, pady=10)
 
+        self.update(entries=entries, start_index=start_index,
+                    display_count=display_count, entry_count=entry_count)
+
     def return_to_main(self):
         self.controller.set_page(PageType.MAIN_PAGE)
 
-    def update(self, data=None):
-        self.table.update(data)
-        entries = data.get("entries")
-        start_index = data.get("start_index")
-        display_count = data.get("display_count")
-        entry_count = data.get("entry_count")
+    def update(self, entries: list[Entry] = None, start_index: int = None, display_count: int = None, entry_count: int = None):
+        if self.entries is not None:
+            self.table.update(entries=entries)
+            self.entries = entries
+        if entry_count is not None:
+            self.entry_count = entry_count
+        if display_count is not None:
+            self.display_count = display_count
+        if start_index is not None:
+            self.start_index = start_index
+
         self.number_label.configure(
-            text=f"{start_index + 1} - {min(start_index + display_count, len(entries))} of {len(entries)}")
+            text=f"{self.start_index + 1} - {min(self.start_index + self.display_count, self.entry_count)} of {self.entry_count}")
 
     def next(self):
         self.controller.elv_next_button_clicked()

@@ -5,8 +5,8 @@ from medrec.view import PageType
 
 
 class HomeView(Page):
-    def __init__(self, parent, controller=None):
-        super().__init__(parent)
+    def __init__(self, parent, controller=None, header_text="Home"):
+        super().__init__(parent, controller, header_text, has_back_button=False)
 
         # Configure the grid
         self.grid_columnconfigure(0, pad=10)
@@ -16,9 +16,9 @@ class HomeView(Page):
         self.grid_rowconfigure(1, pad=10)
 
         # a header for the main frame
-        header = customtkinter.CTkLabel(
-            self, text="Personal Health Record", font=("Arial", 20))
-        header.pack(fill=X, padx=10, pady=40)
+        # header = customtkinter.CTkLabel(
+        #     self, text="Personal Health Record", font=("Arial", 20))
+        # header.pack(fill=X, padx=10, pady=40)
 
         # a frame for the new entry dialog
         new_entry_frame = customtkinter.CTkFrame(self)
@@ -63,7 +63,8 @@ class HomeView(Page):
 
     def new_entry(self):
         if self.controller:
-            self.controller.set_page(PageType.ADD_ENTRY_PAGE)
+            self.controller.set_current_entry(None)
+            self.controller.set_page(PageType.EDIT_ENTRY_PAGE)
 
     def set_controller(self, controller):
         self.controller = controller

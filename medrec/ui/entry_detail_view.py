@@ -2,10 +2,11 @@ from medrec.entry import Entry
 from customtkinter import CTkFrame, CTkLabel, CTkTextbox, CTkButton
 
 from medrec.controller import Controller
+from medrec.ui.page import Page
 
 
-class EntryDetailView(CTkFrame):
-    def __init__(self, parent, controller: Controller = None):
+class EntryDetailView(Page):
+    def __init__(self, parent, controller: Controller = None, entry: Entry = None):
         super().__init__(parent)
         self.set_controller(controller)
 

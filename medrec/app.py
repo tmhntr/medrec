@@ -1,4 +1,4 @@
-from medrec.model import Model, data_path
+from medrec.model import Model
 from medrec.controller import Controller
 from medrec.ui.ctk_view import CTkView
 
@@ -7,7 +7,7 @@ class App():
     def __init__(self):
         super().__init__()
 
-        self.model = Model(path=data_path)
+        self.model = Model()
 
         self.view = CTkView()
 

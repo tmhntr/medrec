@@ -1,16 +1,20 @@
 from abc import ABC, abstractmethod
-from tkinter import Frame as CTkFrame
+from customtkinter import CTkFrame
 
 from medrec.controller import Controller
+from medrec.ui.header import Header
 
 
 class Page(CTkFrame, ABC):
     """The pages in the application."""
     is_visible = False
 
-    def __init__(self, parent, controller: Controller = None):
+    def __init__(self, parent, controller: Controller = None, header_text: str = None, has_back_button: bool = True):
         super().__init__(parent)
         self.controller = controller
+        self.header = Header(
+            self, has_back_button=has_back_button, label=header_text)
+        self.header.pack(side="top", fill="x")
 
     @abstractmethod
     def update(self, data=None):
@@ -18,6 +22,7 @@ class Page(CTkFrame, ABC):
 
     def set_controller(self, controller: Controller):
         self.controller = controller
+        self.header.set_controller(controller)
 
     def show(self):
         self.is_visible = True

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum, auto
 # import library for dates
 from datetime import datetime
@@ -15,13 +16,9 @@ class EntryType(Enum):
 
 
 class Entry(ABC):
-    id: UUID = uuid4()
+    id: int = uuid4().int
     date: str = datetime.now().strftime("%Y-%m-%d")
-    description: str = ""
     entry_type: EntryType
-    attachments: str = None
-    healthcare_workers = []
-    notes: str = None
 
     def __init__(self, date: str = None):
         if date:
@@ -30,52 +27,75 @@ class Entry(ABC):
     def add_notes(self, notes: str):
         self.notes = notes
 
+    @abstractmethod
+    def description(self):
+        """Return a description of the entry."""
 
+    @abstractmethod
+    def adapt(self) -> str:
+        """Return a string representation of the entry."""
+
+
+@dataclass
 class MedicationEntry(Entry):
-    entry_type: str = EntryType.MEDICATION
+    id: str = str(uuid4())
+    date: str = datetime.now().strftime("%Y-%m-%d")
+    entry_type: EntryType = EntryType.MEDICATION
+    medication_name: str = ""
+    dosage: str = ""
+    frequency: str = ""
+    duration: str = ""
+    route: str = ""
+    reason: str = ""
 
-    def __init__(self, date, name, dosage, frequency, duration, route, reason):
-        super().__init__(date=date)
-        self.medication_name = name
-        self.dosage = dosage
-        self.frequency = frequency
-        self.duration = duration
-        self.route = route
-        self.reason = reason
-        self.notes = None
-
+    def description(self):
         attr_list = [self.medication_name, self.dosage,
                      self.frequency, self.duration, self.route, self.reason]
         attr_list = [attr for attr in attr_list if attr]
-        self.description = ", ".join(attr_list)
+        return ", ".join(attr_list)
 
-    def __str__(self):
-        return f"{self.medication_name} {self.dosage} {self.frequency} {self.duration} {self.route} {self.reason}"
+    def adapt(self):
+        return f"({self.id};{self.date};{self.entry_type.name};{self.medication_name};{self.dosage};{self.frequency};{self.duration};{self.route};{self.reason})"
 
 
+@dataclass
 class HealthDataEntry(Entry):
-    def __init__(self, weight, height, blood_pressure, heart_rate, respiratory_rate, temperature):
-        super().__init__()
-        self.weight = weight
-        self.height = height
-        self.blood_pressure = blood_pressure
-        self.heart_rate = heart_rate
-        self.respiratory_rate = respiratory_rate
-        self.temperature = temperature
+    id: str = str(uuid4())
+    date: str = datetime.now().strftime("%Y-%m-%d")
+    entry_type: EntryType = EntryType.HEALTH_DATA
+    weight: str = ""
+    height: str = ""
+    blood_pressure: str = ""
+    heart_rate: str = ""
+    respiratory_rate: str = ""
+    temperature: str = ""
 
-    def __str__(self):
-        return f"{self.weight} {self.height} {self.blood_pressure} {self.heart_rate} {self.respiratory_rate} {self.temperature}"
+    def description(self):
+        attr_list = [self.weight, self.height,
+                     self.blood_pressure, self.heart_rate, self.respiratory_rate, self.temperature]
+        attr_list = [attr for attr in attr_list if attr]
+        return ", ".join(attr_list)
+
+    def adapt(self):
+        return f"({self.id};{self.date};{self.entry_type.name};{self.weight};{self.height};{self.blood_pressure};{self.heart_rate};{self.respiratory_rate};{self.temperature})"
 
 
+@dataclass
 class DoctorVisitEntry(Entry):
-    def __init__(self, reason, diagnosis, treatment):
-        super().__init__()
-        self.reason = reason
-        self.diagnosis = diagnosis
-        self.treatment = treatment
+    id: str = str(uuid4())
+    date: str = datetime.now().strftime("%Y-%m-%d")
+    entry_type: EntryType = EntryType.DOCTOR_VISIT
+    reason: str = ""
+    diagnosis: str = ""
+    treatment: str = ""
 
-    def __str__(self):
-        return f"{self.reason} {self.diagnosis} {self.treatment}"
+    def description(self):
+        attr_list = [self.reason, self.diagnosis, self.treatment]
+        attr_list = [attr for attr in attr_list if attr]
+        return ", ".join(attr_list)
+
+    def adapt(self):
+        return f"({self.id};{self.date};{self.entry_type.name};{self.reason};{self.diagnosis},{self.treatment})"
 
 
 class HealthcareWorker():

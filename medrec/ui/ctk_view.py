@@ -1,7 +1,9 @@
 from medrec.controller import Controller
 from customtkinter import CTk, CTkFrame
+from medrec.entry import Entry
+from medrec.ui.entry_detail_view import EntryDetailView
 from medrec.ui.home_view import HomeView
-from medrec.ui.new_entry_view import NewEntryView
+from medrec.ui.edit_entry_view import EditEntryView
 from medrec.ui.entry_list_view import EntryListView
 from medrec.view import PageType, View
 from medrec.ui.page import Page
@@ -32,31 +34,34 @@ class CTkView(View):
         self.controller = controller
         self.current_page.set_controller(controller)
 
-    def update(self, data=None):
-        """Update the UI."""
-        next_page_type: PageType = data.get("page")
-        if next_page_type == self.current_page_type:
-            self.current_page.update(data)
-        else:
-            self.current_page.destroy()
+    def set_main_page(self):
+        self.current_page.destroy()
+        self.current_page = HomeView(self.root, controller=self.controller)
+        self.current_page.show()
 
-            self.current_page_type = next_page_type
+    def set_new_entry_page(self):
+        self.current_page.destroy()
+        self.current_page = EditEntryView(
+            self.root, controller=self.controller)
+        self.current_page.show()
 
-            if next_page_type == PageType.MAIN_PAGE:
-                self.current_page = HomeView(
-                    self.root, controller=self.controller)
-            elif next_page_type == PageType.ADD_ENTRY_PAGE:
-                self.current_page = NewEntryView(
-                    self.root, controller=self.controller)
-            elif next_page_type == PageType.VIEW_ENTRIES_PAGE:
-                self.current_page = EntryListView(
-                    self.root, controller=self.controller)
-            else:
-                self.current_page = HomeView(
-                    self.root, controller=self.controller)
+    def set_view_entries_page(self, entries: list[Entry], display_count, entry_count, start_index):
+        self.current_page.destroy()
+        self.current_page = EntryListView(
+            self.root, controller=self.controller, entries=entries, display_count=display_count, entry_count=entry_count, start_index=start_index)
+        self.current_page.show()
 
-            self.current_page.update(data)
-            self.current_page.show()
+    def set_edit_entry_page(self, entry: Entry):
+        self.current_page.destroy()
+        self.current_page = EditEntryView(
+            self.root, controller=self.controller, entry=entry)
+        self.current_page.show()
+
+    def set_view_entry_page(self, entry: Entry):
+        self.current_page.destroy()
+        self.current_page = EntryDetailView(
+            self.root, controller=self.controller, entry=entry)
+        self.current_page.show()
 
     def exit(self):
         self.root.destroy()
