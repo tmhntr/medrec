@@ -9,3 +9,4 @@ main.spec
 Pipfile
 .eggs/
 .vscode/
+.DS_Store
